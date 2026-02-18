@@ -37,6 +37,34 @@ class MintHelloView @JvmOverloads constructor(
         post(measureAndLayout)
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        post {
+            val parentWidth = (parent as? View)?.width
+                ?: resources.displayMetrics.widthPixels
+
+            measure(
+                MeasureSpec.makeMeasureSpec(parentWidth, MeasureSpec.AT_MOST),
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+            )
+
+            if (height == 0 && measuredHeight > 0) {
+                layout(left, top, left + measuredWidth, top + measuredHeight)
+            }
+        }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val hMode = MeasureSpec.getMode(heightMeasureSpec)
+        if (hMode == MeasureSpec.UNSPECIFIED || (hMode == MeasureSpec.EXACTLY && MeasureSpec.getSize(heightMeasureSpec) == 0)) {
+            super.onMeasure(
+                widthMeasureSpec,
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+            )
+        }
+    }
+
     private fun buildUI() {
         val scrollView = ScrollView(context).apply {
             layoutParams = FrameLayout.LayoutParams(
