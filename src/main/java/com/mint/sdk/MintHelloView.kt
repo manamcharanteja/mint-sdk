@@ -1,10 +1,7 @@
 package com.mint.sdk
 
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
@@ -22,9 +19,22 @@ class MintHelloView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    private val measureAndLayout = Runnable {
+        measure(
+            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+        )
+        layout(left, top, right, bottom)
+    }
+
     init {
         setBackgroundColor(Color.parseColor("#F5F5F5"))
         buildUI()
+    }
+
+    override fun requestLayout() {
+        super.requestLayout()
+        post(measureAndLayout)
     }
 
     private fun buildUI() {
@@ -46,22 +56,23 @@ class MintHelloView @JvmOverloads constructor(
             setPadding(pad, pad, pad, pad)
         }
 
-        // Header Card
         container.addView(createHeaderCard())
 
-        // Info Section Card
         container.addView(createSectionCard(
-            "About",
-            "This component is rendered from the native Mint SDK written in Kotlin. It adapts to any size provided by the parent."
+            "Welcome",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         ))
 
-        // Stats Section Card
         container.addView(createStatsCard())
 
-        // Status Section Card
         container.addView(createSectionCard(
-            "Status",
-            "SDK is active and ready. All systems operational."
+            "Features",
+            "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit."
+        ))
+
+        container.addView(createSectionCard(
+            "Details",
+            "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis."
         ))
 
         scrollView.addView(container)
@@ -84,7 +95,6 @@ class MintHelloView @JvmOverloads constructor(
             elevation = dpToPx(2).toFloat()
         }
 
-        // Icon circle
         val iconCircle = View(context).apply {
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
@@ -97,18 +107,16 @@ class MintHelloView @JvmOverloads constructor(
         }
         card.addView(iconCircle)
 
-        // Title
         card.addView(TextView(context).apply {
-            text = "Hello from Mint SDK!"
+            text = "Hello from Mint!"
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)
             setTextColor(Color.parseColor("#2E7D32"))
             setTypeface(null, Typeface.BOLD)
             gravity = Gravity.CENTER
         })
 
-        // Subtitle
         card.addView(TextView(context).apply {
-            text = "Native Android Kotlin Component"
+            text = "Your SDK is ready to go"
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
             setTextColor(Color.parseColor("#888888"))
             gravity = Gravity.CENTER
@@ -121,7 +129,6 @@ class MintHelloView @JvmOverloads constructor(
             }
         })
 
-        // Version badge
         card.addView(TextView(context).apply {
             text = "v1.0.0"
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
@@ -168,7 +175,6 @@ class MintHelloView @JvmOverloads constructor(
             setTypeface(null, Typeface.BOLD)
         })
 
-        // Divider
         card.addView(View(context).apply {
             setBackgroundColor(Color.parseColor("#E0E0E0"))
             layoutParams = LinearLayout.LayoutParams(
@@ -206,13 +212,12 @@ class MintHelloView @JvmOverloads constructor(
         }
 
         card.addView(TextView(context).apply {
-            text = "Quick Stats"
+            text = "Overview"
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
             setTextColor(Color.parseColor("#333333"))
             setTypeface(null, Typeface.BOLD)
         })
 
-        // Divider
         card.addView(View(context).apply {
             setBackgroundColor(Color.parseColor("#E0E0E0"))
             layoutParams = LinearLayout.LayoutParams(
@@ -224,7 +229,6 @@ class MintHelloView @JvmOverloads constructor(
             }
         })
 
-        // Stats row
         val row = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -233,9 +237,9 @@ class MintHelloView @JvmOverloads constructor(
             )
         }
 
-        row.addView(createStatItem("Platform", "Android"))
-        row.addView(createStatItem("Language", "Kotlin"))
-        row.addView(createStatItem("Type", "Native"))
+        row.addView(createStatItem("Status", "Active"))
+        row.addView(createStatItem("Version", "1.0.0"))
+        row.addView(createStatItem("Mode", "Live"))
 
         card.addView(row)
         return card
