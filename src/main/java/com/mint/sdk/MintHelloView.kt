@@ -7,9 +7,11 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 
 class MintHelloView @JvmOverloads constructor(
@@ -24,6 +26,23 @@ class MintHelloView @JvmOverloads constructor(
     }
 
     private fun buildUI() {
+        val scrollView = object : ScrollView(context) {
+            override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+                parent?.requestDisallowInterceptTouchEvent(true)
+                return super.onInterceptTouchEvent(ev)
+            }
+
+            override fun onTouchEvent(ev: MotionEvent): Boolean {
+                parent?.requestDisallowInterceptTouchEvent(true)
+                return super.onTouchEvent(ev)
+            }
+        }.apply {
+            layoutParams = FrameLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT
+            )
+        }
+
         val container = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = FrameLayout.LayoutParams(
@@ -48,7 +67,8 @@ class MintHelloView @JvmOverloads constructor(
             "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         ))
 
-        addView(container)
+        scrollView.addView(container)
+        addView(scrollView)
     }
 
     private fun createHeaderCard(): View {
