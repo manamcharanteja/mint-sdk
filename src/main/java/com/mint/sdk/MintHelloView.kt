@@ -7,11 +7,9 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 
 class MintHelloView @JvmOverloads constructor(
@@ -20,62 +18,15 @@ class MintHelloView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val measureAndLayout = Runnable {
-        measure(
-            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
-        )
-        layout(left, top, right, bottom)
-    }
-
     init {
         setBackgroundColor(Color.parseColor("#F5F5F5"))
         buildUI()
     }
 
-    override fun requestLayout() {
-        super.requestLayout()
-        post(measureAndLayout)
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        post {
-            val parentWidth = (parent as? View)?.width
-                ?: resources.displayMetrics.widthPixels
-            val parentHeight = (parent as? View)?.height
-                ?: resources.displayMetrics.heightPixels
-
-            if (height == 0) {
-                val cappedHeight = parentHeight
-                layout(left, top, left + parentWidth, top + cappedHeight)
-            }
-        }
-    }
-
     private fun buildUI() {
-        val scrollView = object : ScrollView(context) {
-            override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-                parent?.requestDisallowInterceptTouchEvent(true)
-                return super.onInterceptTouchEvent(ev)
-            }
-
-            override fun onTouchEvent(ev: MotionEvent): Boolean {
-                parent?.requestDisallowInterceptTouchEvent(true)
-                return super.onTouchEvent(ev)
-            }
-        }.apply {
-            layoutParams = FrameLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT
-            )
-            isFillViewport = true
-            isVerticalScrollBarEnabled = true
-        }
-
         val container = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            layoutParams = LinearLayout.LayoutParams(
+            layoutParams = FrameLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT
             )
@@ -93,17 +44,11 @@ class MintHelloView @JvmOverloads constructor(
         container.addView(createStatsCard())
 
         container.addView(createSectionCard(
-            "Features",
-            "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit."
-        ))
-
-        container.addView(createSectionCard(
             "Details",
-            "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis."
+            "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         ))
 
-        scrollView.addView(container)
-        addView(scrollView)
+        addView(container)
     }
 
     private fun createHeaderCard(): View {
