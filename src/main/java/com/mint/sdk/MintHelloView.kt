@@ -42,26 +42,13 @@ class MintHelloView @JvmOverloads constructor(
         post {
             val parentWidth = (parent as? View)?.width
                 ?: resources.displayMetrics.widthPixels
+            val parentHeight = (parent as? View)?.height
+                ?: resources.displayMetrics.heightPixels
 
-            measure(
-                MeasureSpec.makeMeasureSpec(parentWidth, MeasureSpec.AT_MOST),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-            )
-
-            if (height == 0 && measuredHeight > 0) {
-                layout(left, top, left + measuredWidth, top + measuredHeight)
+            if (height == 0) {
+                val cappedHeight = parentHeight
+                layout(left, top, left + parentWidth, top + cappedHeight)
             }
-        }
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val hMode = MeasureSpec.getMode(heightMeasureSpec)
-        if (hMode == MeasureSpec.UNSPECIFIED || (hMode == MeasureSpec.EXACTLY && MeasureSpec.getSize(heightMeasureSpec) == 0)) {
-            super.onMeasure(
-                widthMeasureSpec,
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-            )
         }
     }
 
