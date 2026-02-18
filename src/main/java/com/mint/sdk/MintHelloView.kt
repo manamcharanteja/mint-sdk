@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -53,12 +54,23 @@ class MintHelloView @JvmOverloads constructor(
     }
 
     private fun buildUI() {
-        val scrollView = ScrollView(context).apply {
+        val scrollView = object : ScrollView(context) {
+            override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+                parent?.requestDisallowInterceptTouchEvent(true)
+                return super.onInterceptTouchEvent(ev)
+            }
+
+            override fun onTouchEvent(ev: MotionEvent): Boolean {
+                parent?.requestDisallowInterceptTouchEvent(true)
+                return super.onTouchEvent(ev)
+            }
+        }.apply {
             layoutParams = FrameLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT
             )
             isFillViewport = true
+            isVerticalScrollBarEnabled = true
         }
 
         val container = LinearLayout(context).apply {
